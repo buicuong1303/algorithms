@@ -26,11 +26,10 @@ class SinglyLinkedListNode {
     const newNode = new Node(value)
     newNode.next = this.head
     this.head = newNode
-    this.size++;
-    return newNode;
+    this.size++
+    return newNode
   }
 
- 
   insertAt(value, index) {
     const newNode = new Node(value)
     let curr = this.head
@@ -40,18 +39,20 @@ class SinglyLinkedListNode {
 
     if (index === this.size) {
       return this.append(value)
-    }
-    if (index === 0) {
+    } else if (index === 0) {
       return this.prepend(value)
+    } else {
+      let i = 0
+      while (i < index) {
+        i++
+        pre = curr
+        curr = curr.next
+      }
+      newNode.next = curr
+      pre.next = newNode
+      this.size++;
+      return newNode
     }
-    let i = 0
-    while (i < index) {
-      i++
-      pre = curr
-      curr = curr.next
-    }
-    newNode.next = curr
-    pre.next = newNode
   }
 
   insertAt2(value, index) {
@@ -59,21 +60,21 @@ class SinglyLinkedListNode {
     let curr = this.head
     if (index < 0 || index > this.size)
       return console.log('Please enter a valid index.')
-    this.size++
 
     if (index === this.size) {
       return this.append(value)
-    }
-    if (index === 0) {
+    } else if (index === 0) {
       return this.prepend(value)
+    } else {
+      let i = 0
+      while (i < index - 1) {
+        i++
+        curr = curr.next
+      }
+      newNode.next = curr.next
+      curr.next = newNode
+      this.size++
     }
-    let i = 0
-    while (i < index - 1) {
-      i++
-      curr = curr.next
-    }
-    newNode.next = curr.next
-    curr.next = newNode
   }
 
   removeAt(index) {
@@ -82,8 +83,8 @@ class SinglyLinkedListNode {
     if (index < 0 || index >= this.size)
       return console.log('Please enter a valid index')
     let i = 0
-    if (index === 0) return this.removeHead();
-    if (index === this.size - 1) return this.removeTail();
+    if (index === 0) return this.removeHead()
+    if (index === this.size - 1) return this.removeTail()
     while (i < index) {
       i++
       pre = curr
@@ -94,21 +95,21 @@ class SinglyLinkedListNode {
   }
 
   removeHead() {
-    let curr = this.head;
-    this.head = curr.next;
-    this.size--;
+    // let curr = this.head;
+    this.head = this.head.next
+    this.size--
   }
 
-  removeTail(){
-    let curr = this.head;
-    let pre = null;
-    while(curr.next !== null) {
-      pre = curr;
-      curr = curr.next;
+  removeTail() {
+    let curr = this.head
+    let pre = null
+    while (curr.next !== null) {
+      pre = curr
+      curr = curr.next
     }
     pre.next = null
-    this.tail = pre;
-    this.size--;
+    this.tail = pre
+    this.size--
   }
 
   removeElement(value) {
@@ -143,10 +144,11 @@ list.append(2)
 list.append(3)
 list.append(4)
 list.append(5)
-list.insertAt2(0, 0)
-list.insertAt(6, 6)
-list.removeTail()
-list.removeHead()
-list.removeAt(4)
+// list.insertAt2(0, 3)
+list.insertAt2(6, 5)
+// list.removeTail()
+// list.removeHead()
+// list.removeAt(4)
+// list.prepend(1)
 // list.removeElement(1)
 list.print()
