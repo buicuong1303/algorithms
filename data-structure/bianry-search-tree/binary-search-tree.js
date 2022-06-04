@@ -70,25 +70,62 @@ class BinaryTreeNode {
   get height() {
     return Math.max(this.leftHeight, this.rightHeight);
   }
+  setValue(value) {
+    this.value = value;
 
+    return this;
+  }
   /**
    * @return {number}
    */
+  setLeft(node) {
+    // Đặt lại nút cha cho nút bên trái vì nó sẽ bị tách rời.
+    if (this.left) {
+      this.left.parent = null;
+    }
+
+    // Đính kèm nút mới vào bên trái.
+    this.left = node;
+
+    // Đặt nút hiện tại làm nút cha cho nút mới bên trái.
+    if (this.left) {
+      this.left.parent = this;
+    }
+
+    return this;
+  }
+
+  setRight(node) {
+    // Đặt lại nút cha cho nút bên phải vì nó sẽ bị tách rời.
+    if (this.right) {
+      this.right.parent = null;
+    }
+
+    // Đính kèm nút mới vào bên phải.
+    this.right = node;
+
+    // Đặt nút hiện tại làm nút cha cho nút mới bên phải.
+    if (node) {
+      this.right.parent = this;
+    }
+
+    return this;
+  }
+
   insert(value) {
     if (value < this.value) {
       if (this.left) {
         return this.left.insert(value);
       }
-      this.left = new BinaryTreeNode(value);
-      this.left.parent = this;
+      this.setLeft(new BinaryTreeNode(value));
     } else {
       if (this.right) {
         return this.right.insert(value);
       }
-      this.right = new BinaryTreeNode(value);
-      this.right.parent = this;
+      this.setRight(new BinaryTreeNode(value));
     }
   }
+
   find(value) {
     if (value === this.value) return this;
     else if (value < this.value) return this.left.find(value);
@@ -111,6 +148,27 @@ class BinaryTreeNode {
 
     return false;
   }
+  copyNode(sourceNode, targetNode) {
+    targetNode.setValue(sourceNode.value);
+    targetNode.setLeft(sourceNode.left);
+    targetNode.setRight(sourceNode.right);
+  }
+  replaceChild(nodeToReplace, replacementNode) {
+    if (!nodeToReplace || !replacementNode) {
+      return false;
+    }
+    if (this.left && this.left.value === nodeToReplace.value) {
+      this.left = replacementNode;
+      return true;
+    }
+
+    if (this.right && this.right.value === nodeToReplace.value) {
+      this.right = replacementNode;
+      return true;
+    }
+
+    return false;
+  }
   remove(value) {
     const nodeToRemove = this.find(value);
     if (!nodeToRemove) {
@@ -127,30 +185,34 @@ class BinaryTreeNode {
       const replaceNode = this.right.findMin();
       if (replaceNode.value !== nodeToRemove.right.value) {
         this.remove(replaceNode.value);
-        nodeToRemove.value = replaceNode.value
+        nodeToRemove.value = replaceNode.value;
       } else {
-        nodeToRemove.value = nodeToRemove.right.value
+        nodeToRemove.value = nodeToRemove.right.value;
 
         nodeToRemove.right.right.parent = nodeToRemove;
         nodeToRemove.right = nodeToRemove.right.right;
-          // Trong trường hợp nếu giá trị nút con bên phải là giá trị lớn hơn kế tiếp
-          // và nó không có con bên trái thì chỉ cần thay thế nút sắp bị xóa bằng nút con bên phải.
+        // Trong trường hợp nếu giá trị nút con bên phải là giá trị lớn hơn kế tiếp
+        // và nó không có con bên trái thì chỉ cần thay thế nút sắp bị xóa bằng nút con bên phải.
       }
     } else {
-
+      const childNode = nodeToRemove.left || nodeToRemove.right;
+      if (parent) {
+        parent.replaceChild(nodeToRemove, childNode);
+      } else {
+        this.copyNode(childNode, nodeToRemove);
+      }
     }
     nodeToRemove.parent = null;
   }
 }
-const tree = new BinarySearchTree(7);
-tree.insert(6);
+const tree = new BinarySearchTree(6);
 tree.insert(8);
-tree.insert(9);
+tree.insert(7);
 // tree.remove(1)
 // tree.remove(2)
 // tree.remove(5)
 // tree.remove(4)
-tree.remove(7)
+tree.remove(6);
 
 console.log(tree.root);
 // console.log(tree.getHeight())
